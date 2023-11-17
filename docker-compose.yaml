@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  laravel-app:
+    container_name: laravel-app
+    build: ./laravel-app
+    volumes:
+      - ./laravel-app:/var/www/html
+    ports:
+      - 9000:80
+    depends_on:
+      - mysql-db
+      - minio-storage
+
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel_database
+    ports:
+      - 3306:3306
+
+  minio-storage:
+    image: minio/minio:latest
+    container_name: minio-storage
+    command: server /data
+    ports:
+      - "9001:9000"
+    environment:
+      - MINIO_ACCESS_KEY=12345678
+      - MINIO_SECRET_KEY=12345678
+    volumes:
+      - ./minio-data:/data
